@@ -1,10 +1,15 @@
 package java8impatient;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Java SE 8 For the Really Impatient - exercises
@@ -20,8 +25,68 @@ public class ChapterOne {
         // exerciseFourSortFilesUsingComparator();
         // exerciseFourSortFilesLambaOnly();
         // exerciseSixUncheckRunnable();
-        exerciseSevenAndThenRunnable();
+        // exerciseSevenAndThenRunnable();
+        // exerciseSevenAndThenUsingChainableRunnable();
+        // exerciseEightForEach();
+        exerciseNineCollectionForEachIf();
 
+    }
+
+    private static interface Collection2<E> extends Collection<E> {
+        public default void forEachIf(Consumer<E> action, Predicate<E> filter) {
+            for (E element : this) {
+                if (filter.test(element)) {
+                    action.accept(element);
+                }
+            }
+        }
+    }
+
+    // We need a named class to implement the interface
+    private static class ArrayList2<E> extends ArrayList<E> implements Collection2<E> {
+    }
+
+    private static void exerciseNineCollectionForEachIf() {
+        ArrayList2<String> al2 = new ArrayList2();
+        al2.addAll(Arrays.asList("Joe", "Edouard Bracame", "Guido Brasletti", "Jean-Raoul Ducable",
+                "Jean Manchzeck", "Paul Posichon", "Pierre Leghnome", "Jérémie Lapurée"));
+        al2.forEachIf(System.out::println, (s) -> s.startsWith("J"));
+    }
+
+    private static void exerciseEightForEach() {
+        String[] names = { "Peter", "Paul", "Mary" };
+        List<Runnable> runners = new ArrayList<>();
+        for (String name : names) {
+
+            // legal, lambda captures the free 'name' variable
+            runners.add(() -> System.out.println(name));
+        }
+
+        for (Runnable r : runners) {
+            r.run();
+        }
+    }
+
+    private static void exerciseSevenAndThenUsingChainableRunnable() {
+        chainable(() -> System.out.println("one")).andThen(() -> System.out.println("two"))
+                .andThen(() -> System.out.println("three")).run();
+
+    }
+
+    private static ChainableRunnable chainable(Runnable r) {
+        return () -> {
+            r.run();
+        };
+    }
+
+    private interface ChainableRunnable extends Runnable {
+        default ChainableRunnable andThen(Runnable r) {
+            Objects.requireNonNull(r);
+            return () -> {
+                this.run();
+                r.run();
+            };
+        }
     }
 
     private static void exerciseSevenAndThenRunnable() {
