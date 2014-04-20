@@ -29,9 +29,18 @@ public class ChapterOne {
         // exerciseSevenAndThenUsingChainableRunnable();
         // exerciseEightForEach();
         // exerciseNineCollectionForEachIf();
-        exerciseElevenInterfacesMethodClashes();
-        exerciseElevenSuperclassAndInterfaceMethodClashes();
+        // exerciseElevenInterfacesMethodClashes();
+        // exerciseElevenSuperclassAndInterfaceMethodClashes();
+        exerciseTwelveBackwardCompatibilityFails();
 
+    }
+
+    private static void exerciseTwelveBackwardCompatibilityFails() {
+        class ArrayList2 extends ArrayList {
+            
+            // This is valid Java 7 code, but it does not compile in Java 8
+            // public void stream() {}
+        }
     }
 
     private static class S {
