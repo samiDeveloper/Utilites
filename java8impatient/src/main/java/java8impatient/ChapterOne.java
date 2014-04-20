@@ -28,8 +28,79 @@ public class ChapterOne {
         // exerciseSevenAndThenRunnable();
         // exerciseSevenAndThenUsingChainableRunnable();
         // exerciseEightForEach();
-        exerciseNineCollectionForEachIf();
+        // exerciseNineCollectionForEachIf();
+        exerciseElevenInterfacesMethodClashes();
+        exerciseElevenSuperclassAndInterfaceMethodClashes();
 
+    }
+
+    private static class S {
+        public void f() {
+            System.out.println("S");
+        }
+    }
+
+    private static interface IAbstract {
+        void f();
+    }
+
+    private static interface JAbstract {
+        void f();
+    }
+
+    private static interface IDefault {
+        default void f() {
+            System.out.println("IDefault");
+        }
+    }
+
+    private static interface JDefault {
+        default void f() {
+            System.out.println("JDefault");
+        }
+    }
+
+    private static interface JStatic {
+        static void f() {
+            System.out.println(JStatic.class.getName());
+        }
+    }
+
+    private static void exerciseElevenInterfacesMethodClashes() {
+        class Defaults implements IDefault, JDefault {
+            // clash, must override and resolve conflict.
+            @Override
+            public void f() {
+                // Resolve by for example pick the one from I
+                IDefault.super.f();
+            }
+        }
+
+        class Abstracts implements IAbstract, JAbstract {
+            // We just have to provide an implementation because none exists
+            @Override
+            public void f() {}
+        }
+
+        // Even if only one interface provides an implementation, the compiler considers this an ambiguity.
+        // Subclass must resolve.
+        class DefaultAbstract implements IDefault, JAbstract {
+            @Override
+            public void f() {}
+        }
+
+        // Nothing to see here
+        class DefaultStatic implements IDefault, JStatic {}
+
+        System.out.println("See comments in exerciseElevenInterfacesMethodClashes()");
+    }
+
+    private static void exerciseElevenSuperclassAndInterfaceMethodClashes() {
+        class Defaults extends S implements IDefault {}
+        new Defaults().f(); // Prints "S", superclass wins
+
+        // Nothing new here, S provides implementation
+        class Abstracts extends S implements IAbstract {}
     }
 
     private static interface Collection2<E> extends Collection<E> {
@@ -43,8 +114,7 @@ public class ChapterOne {
     }
 
     // We need a named class to implement the interface
-    private static class ArrayList2<E> extends ArrayList<E> implements Collection2<E> {
-    }
+    private static class ArrayList2<E> extends ArrayList<E> implements Collection2<E> {}
 
     private static void exerciseNineCollectionForEachIf() {
         ArrayList2<String> al2 = new ArrayList2();
