@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * 
  * Ch 01. Lambda Expressions
  */
-public class ChapterOne {
+public class ChapterOneLambda {
     public static void main(String[] args) {
         // randomStuff();
 
