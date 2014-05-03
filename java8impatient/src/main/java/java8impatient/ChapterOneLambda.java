@@ -1,5 +1,6 @@
 package java8impatient;
 
+import static java8impatient.Util.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -37,7 +37,7 @@ public class ChapterOneLambda {
 
     private static void exerciseTwelveBackwardCompatibilityFails() {
         class ArrayList2 extends ArrayList {
-            
+
             // This is valid Java 7 code, but it does not compile in Java 8
             // public void stream() {}
         }
@@ -297,22 +297,6 @@ public class ChapterOneLambda {
             });
             System.out.println(Arrays.asList(sa));
         }
-    }
-
-    private static void printArray(Object[] objects) {
-        printList(Arrays.asList(objects));
-    }
-
-    private static void printList(List<Object> objects) {
-        objects.stream().forEachOrdered(System.out::println);
-    }
-
-    private static <T> void printArray(T[] objects, Function<T, ?> transformAction) {
-        printList(Arrays.asList(objects), transformAction);
-    }
-
-    private static <T> void printList(List<T> objects, Function<T, ?> f) {
-        objects.stream().map(f).forEachOrdered(System.out::println);
     }
 
 }
