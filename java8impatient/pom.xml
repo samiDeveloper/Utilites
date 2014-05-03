@@ -34,5 +34,10 @@
   </build>
 
   <dependencies>
+  <dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>r05</version>
+  </dependency>
   </dependencies>
 </project>
