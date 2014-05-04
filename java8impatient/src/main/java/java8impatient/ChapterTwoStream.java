@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -22,7 +23,6 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.sun.javafx.binding.SelectBinding.AsLong;
 
 public class ChapterTwoStream {
     private static final List<String> NAMES = Arrays.asList("Joe", "Edouard Bracame", "Guido Brasletti",
@@ -42,8 +42,15 @@ public class ChapterTwoStream {
         // exerciseSixCharStream();
         // exerciseEightAlternate();
         // exerciseNineJoinArrayLists();
-        exerciseTenAvgDoubleStream();
+        // exerciseTenAvgDoubleStream();
+        exerciseTwelveCountAtomicInt();
+    }
 
+    private static void exerciseTwelveCountAtomicInt() {
+        List<String> words = Arrays.asList(TEXT.split("[\\P{L}]+"));
+        AtomicInteger count = new AtomicInteger();
+        words.parallelStream().filter(s -> s.length() < 3).forEach(s -> count.getAndIncrement());
+        System.out.println(count);
     }
 
     private static void exerciseTenAvgDoubleStream() {
@@ -59,9 +66,9 @@ public class ChapterTwoStream {
         }
 
         Stream<Double> doubleStream = Arrays.asList(1.6d, 6.3d, 2.0d).stream();
-        Avg reduce = doubleStream.reduce(new Avg(0, 0.0d),
-                (avg, d) -> new Avg(avg.count + 1, (avg.avg * avg.count + d) / (avg.count + 1)), (l, r) -> new Avg(l.count
-                        + r.count, (l.avg * l.count + r.avg * r.count) / (l.count + r.count)));
+        Avg reduce = doubleStream.reduce(new Avg(0, 0.0d), (avg, d) -> new Avg(avg.count + 1, (avg.avg * avg.count + d)
+                / (avg.count + 1)), (l, r) -> new Avg(l.count + r.count, (l.avg * l.count + r.avg * r.count)
+                / (l.count + r.count)));
         System.out.println(reduce.avg);
     }
 
