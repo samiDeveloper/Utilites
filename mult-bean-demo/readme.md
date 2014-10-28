@@ -1,4 +1,4 @@
-This project shows a scenario where spring Java config instanciates multiple singleton beans
+This project shows a scenario where spring Java config instantiates multiple singleton beans
 
 Uses Java 8 and maven
 
