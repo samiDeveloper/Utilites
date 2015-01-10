@@ -2,6 +2,13 @@ package bs;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+/**
+ * Demoes Spring bean lite mode.
+ * <p>
+ * See also <a href=
+ * "http://stackoverflow.com/questions/26641349/why-does-this-java-based-spring-configuration-create-two-instances-of-a-singleto"
+ * >Why does this Java based Spring configuration create two instances of a singleton bean?</a>
+ */
 public class App {
     public static void main(String[] args) {
         try (AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class)) {
