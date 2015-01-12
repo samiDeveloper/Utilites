@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure id="server" class="org.eclipse.jetty.server.Server">
+
+  <New class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg><Ref id="server"/></Arg>
+    <Arg>jdbc/demoDataSource</Arg>
+    <Arg>
+      <New class="bs.h2datasource.H2DataSource">
+        <Set name="suppressClose">true</Set>
+        <Set name="url">jdbc:h2:mem:demodb</Set>
+        <Set name="username">sa</Set>
+        <Set name="h2TcpPort">9092</Set>
+      </New>
+    </Arg>
+  </New>
+
+</Configure>
