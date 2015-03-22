@@ -1,3 +1,6 @@
+config-demo
+: Template project to generate environment specific configurations 
+
 h2-demo
 : Shows how to start an h2 in-mem db and to connect from outside
 
