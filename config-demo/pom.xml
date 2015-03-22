@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>bs</groupId>
+  <artifactId>config-demo</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <description>
+    Generates environment specific application configurations for multiple environments (examples here for local and prod).
+    
+    The resources in this parent src/main/resources act as a template and apply to each environment.
+    If the resource-file is optional or very environment specific, for example logging config, then put it in [env]/src/main/resources
+    
+    This build makes the environment-specific artifacts are available as a .zip file. 
+  </description>
+
+  <modules>
+    <module>local</module>  <!-- developer workstation, or ci -->
+    <!-- <module>dev</module> -->
+    <!-- <module>test</module> -->
+    <!-- <module>acc</module> -->
+    <module>prod</module>
+  </modules>
+
+  <build>
+    <resources>
+      <resource>
+        <!-- These common resources apply to each environment, contains placeholders for environment-specific values -->
+        <directory>../src/main/resources</directory>  <!-- we use ../ because ${project.parent.basedir} is not working in mvn 3 -->
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <!-- These resources differ so much between envs that we have env specific files, for example logging config -->
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.7</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>resources</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>assemble-zip</id>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <phase>package</phase>
+              <configuration>
+                <descriptors>
+                  <descriptor>../assembly.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
