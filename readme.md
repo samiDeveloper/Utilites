@@ -9,3 +9,6 @@ java8impatient
 
 mult-bean-demo
 : Demo Spring bean lite mode. See also my [question on SO](http://stackoverflow.com/questions/26641349/why-does-this-java-based-spring-configuration-create-two-instances-of-a-singleto)
+
+sql-insert-fmt
+: Formats SQL insert statements by aligning columnnames and values
