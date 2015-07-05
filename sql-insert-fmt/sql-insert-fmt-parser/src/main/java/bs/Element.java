@@ -1,0 +1,5 @@
+package bs;
+
+public enum Element {
+    NONE, INSERT_INTO_TABLENAME, COLUMNNAMES, VALUES, COLUMNVALUES;
+}
