@@ -2,6 +2,7 @@ package bs;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,28 +12,67 @@ import org.junit.Test;
 
 import bs.sqlitegrammar.SQLiteLexer;
 import bs.sqlitegrammar.SQLiteParser;
-import bs.sqlitegrammar.SQLiteParser.Sql_stmtContext;
+import bs.sqlitegrammar.SQLiteParser.Sql_stmt_listContext;
 
 public class InsertParserTest {
     @Test
     public void testParse() throws IOException {
 
-        InputStream is = getClass().getResourceAsStream("/sqLiteParserTest.insert.sql");
+        String input = "/sqLiteParserTest.insert.sql";
+        Sql_stmt_listContext sqlStmtList = createSqlStmtListContext(input);
 
+        ParseTreeWalker walker = new ParseTreeWalker();
+        InsertParser listener = new InsertParser();
+        walker.walk(listener, sqlStmtList);
+
+        String expected = resourceToString("insertParserTest.testParse.expected.txt");
+        Assert.assertEquals(expected, listener.getStatements().iterator().next().format());
+    }
+
+    @Test
+    public void testParseMultiple() throws IOException {
+
+        String input = "/sqLiteParserTest.insert-multi.sql";
+
+        Sql_stmt_listContext sqlStmtList = createSqlStmtListContext(input);
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        InsertParser listener = new InsertParser();
+        walker.walk(listener, sqlStmtList);
+
+        String expected = resourceToString("insertParserTest.testParseMultiple.expected.txt");
+        String actual = InsertStatement.format(listener.getStatements());
+        System.out.println(actual);
+        Assert.assertEquals(expected, actual);
+    }
+
+    private static Sql_stmt_listContext createSqlStmtListContext(String resource) throws IOException {
+        InputStream is = InsertParserTest.class.getResourceAsStream(resource);
         SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
         SQLiteParser parser = new SQLiteParser(tokens);
-        Sql_stmtContext sqlStmt = parser.sql_stmt();
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        InsertParser listener = new InsertParser() {
-        };
-        walker.walk(listener, sqlStmt);
-        System.out.println(listener.getStatement().format());
-        Assert.fail("NYI");
+        Sql_stmt_listContext sqlStmtList = parser.sql_stmt_list();
+        return sqlStmtList;
     }
 
+//    private static Sql_stmtContext createSqlStmtContext(String resource) throws IOException {
+//        InputStream is = InsertParserTest.class.getResourceAsStream(resource);
+//
+//        SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));
+//
+//        CommonTokenStream tokens = new CommonTokenStream(lexer);
+//
+//        SQLiteParser parser = new SQLiteParser(tokens);
+//        Sql_stmtContext sqlStmt = parser.sql_stmt();
+//        return sqlStmt;
+//    }
+
+    private static String resourceToString(String resource) {
+        Scanner scanner = new Scanner(InsertParserTest.class.getResourceAsStream(resource), "UTF-8")
+                .useDelimiter("\\A");
+        return scanner.hasNext() ? scanner.next() : "";
+    }
 
 }
