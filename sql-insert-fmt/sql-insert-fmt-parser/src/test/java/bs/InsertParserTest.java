@@ -26,7 +26,9 @@ public class InsertParserTest {
         walker.walk(listener, sqlStmtList);
 
         String expected = resourceToString("insertParserTest.testParse.expected.txt");
-        Assert.assertEquals(expected, listener.getStatements().iterator().next().format());
+        Config config = new Config().setLineWidth(60).setIndent(4).setSpacingBetweenValues(0);
+        String actual = listener.getStatements().iterator().next().format(config);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -42,7 +44,6 @@ public class InsertParserTest {
 
         String expected = resourceToString("insertParserTest.testParseMultiple.expected.txt");
         String actual = InsertStatement.format(listener.getStatements());
-        System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }
 
@@ -56,18 +57,6 @@ public class InsertParserTest {
         Sql_stmt_listContext sqlStmtList = parser.sql_stmt_list();
         return sqlStmtList;
     }
-
-//    private static Sql_stmtContext createSqlStmtContext(String resource) throws IOException {
-//        InputStream is = InsertParserTest.class.getResourceAsStream(resource);
-//
-//        SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));
-//
-//        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//
-//        SQLiteParser parser = new SQLiteParser(tokens);
-//        Sql_stmtContext sqlStmt = parser.sql_stmt();
-//        return sqlStmt;
-//    }
 
     private static String resourceToString(String resource) {
         Scanner scanner = new Scanner(InsertParserTest.class.getResourceAsStream(resource), "UTF-8")

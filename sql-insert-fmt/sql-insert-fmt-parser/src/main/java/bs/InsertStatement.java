@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Formattable representation of the statement */
+/** Builder and formattable representation of the statement */
 public class InsertStatement {
     public static final String SPACE = " ";
     public static final String PAREN_OPEN = "(";
@@ -74,16 +74,18 @@ public class InsertStatement {
     }
     
     public String format() {
-        final String indent = "    ";
-
+        return format(new Config());
+    }
+    
+    public String format(Config config) {
         StringBuilder sb = new StringBuilder(insert).append(SPACE).append(into).append(SPACE).append(tablename)
                 .append(SPACE).append(PAREN_OPEN).append(NEWLINE);
 
-        formatColumnNames(indent, sb);
+        formatColumnNames(sb, config);
 
         sb.append(PAREN_CLOSE).append(SPACE).append(values).append(SPACE).append(PAREN_OPEN).append(NEWLINE);
 
-        formatColumnValues(indent, sb);
+        formatColumnValues(sb, config);
 
         sb.append(PAREN_CLOSE);
 
@@ -94,7 +96,10 @@ public class InsertStatement {
         return sb.toString();
     }
 
-    private void formatColumnNames(final String indent, StringBuilder sb) {
+    private void formatColumnNames(StringBuilder sb, Config config) {
+        final String indent = buildSpaces(config.getIndent());
+        final String spacing = buildSpaces(config.getSpacingBetweenValues());
+
         Iterator<ColumnValue> columnIter = columnValues.iterator();
         while (columnIter.hasNext()) {
             ColumnValue firstColOfLine = columnIter.next();
@@ -102,12 +107,12 @@ public class InsertStatement {
             int lineLength = indent.length() + firstColOfLine.length();
             ColumnValue lastCol = firstColOfLine;
 
-            while (columnIter.hasNext() && lineLength < 60) {
+            while (columnIter.hasNext() && lineLength < config.getLineWidth()) {
                 // %1$-5 right-pads with 5 spaces
-                columnLine.append(COMMA).append(buildColumnPaddingString(lastCol));
+                columnLine.append(COMMA).append(spacing).append(buildColumnPaddingString(lastCol));
                 ColumnValue currentCol = columnIter.next();
+                lineLength = columnLine.length() + currentCol.length();
                 columnLine.append(currentCol.getColumn());
-                lineLength += currentCol.length();
 
                 lastCol = currentCol;
             }
@@ -115,7 +120,10 @@ public class InsertStatement {
         }
     }
 
-    private void formatColumnValues(final String indent, StringBuilder sb) {
+    private void formatColumnValues(StringBuilder sb, Config config) {
+        final String indent = buildSpaces(config.getIndent());
+        final String spacing = buildSpaces(config.getSpacingBetweenValues());
+
         Iterator<ColumnValue> columnIter = columnValues.iterator();
         while (columnIter.hasNext()) {
             ColumnValue firstColOfLine = columnIter.next();
@@ -123,9 +131,9 @@ public class InsertStatement {
             int lineLength = indent.length() + firstColOfLine.length();
             ColumnValue lastCol = firstColOfLine;
 
-            while (columnIter.hasNext() && lineLength < 60) {
+            while (columnIter.hasNext() && lineLength < config.getLineWidth()) {
                 // %1$-5 right-pads with 5 spaces
-                columnLine.append(COMMA).append(buildValuePaddingString(lastCol));
+                columnLine.append(COMMA).append(spacing).append(buildValuePaddingString(lastCol));
                 ColumnValue currentCol = columnIter.next();
                 columnLine.append(currentCol.getValue());
                 lineLength += currentCol.length();
@@ -146,10 +154,14 @@ public class InsertStatement {
 
     private static String buildValuePaddingString(ColumnValue lastCol) {
         int padding = calcValuePadSpaces(lastCol);
-        if (padding == 0) {
+        return buildSpaces(padding);
+    }
+
+    private static String buildSpaces(int spaces) {
+        if (spaces == 0) {
             return "";
         }
-        return String.format("%1$-" + padding + "s", "");
+        return String.format("%1$-" + spaces + "s", "");
     }
 
     public static int calcColumnPadSpaces(ColumnValue cv) {
