@@ -13,11 +13,8 @@ import org.junit.Test;
 import bs.sqlitegrammar.SQLiteBaseListener;
 import bs.sqlitegrammar.SQLiteLexer;
 import bs.sqlitegrammar.SQLiteParser;
-import bs.sqlitegrammar.SQLiteParser.Any_nameContext;
-import bs.sqlitegrammar.SQLiteParser.Column_defContext;
 import bs.sqlitegrammar.SQLiteParser.Column_nameContext;
 import bs.sqlitegrammar.SQLiteParser.Insert_stmtContext;
-import bs.sqlitegrammar.SQLiteParser.NameContext;
 import bs.sqlitegrammar.SQLiteParser.Sql_stmtContext;
 import bs.sqlitegrammar.SQLiteParser.Sql_stmt_listContext;
 import bs.sqlitegrammar.SQLiteParser.Table_nameContext;
@@ -89,17 +86,14 @@ public class SqLiteParserTest {
 
             @Override
             public void enterTable_name(Table_nameContext ctx) {
-                System.out.println(ctx.getText());
             }
 
             @Override
             public void enterColumn_name(Column_nameContext ctx) {
-//                System.out.println(ctx.getText());
             }
             
             @Override
             public void visitTerminal(TerminalNode node) {
-              System.out.println(node);
             }
 
 

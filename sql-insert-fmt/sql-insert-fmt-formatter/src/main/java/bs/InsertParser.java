@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import bs.sqlitegrammar.SQLiteBaseListener;
 import bs.sqlitegrammar.SQLiteParser.Column_nameContext;
-import bs.sqlitegrammar.SQLiteParser.ErrorContext;
 import bs.sqlitegrammar.SQLiteParser.ExprContext;
 import bs.sqlitegrammar.SQLiteParser.Insert_stmtContext;
 import bs.sqlitegrammar.SQLiteParser.Table_nameContext;
@@ -28,12 +26,16 @@ public class InsertParser extends SQLiteBaseListener {
 
     @Override
     public void enterInsert_stmt(Insert_stmtContext ctx) {
-        currentElement = Element.INSERT_INTO_TABLENAME;
+        currentElement = Element.INSERT;
     }
 
     @Override
     public void enterTable_name(Table_nameContext ctx) {
+        if (currentElement != Element.INTO) {
+            throw new InsertParserException("Missing insert into statement at line " + ctx.getStart().getLine());
+        }
         statement.withTable(ctx.getText());
+        currentElement = Element.TABLENAME;
     }
 
     @Override
@@ -48,18 +50,26 @@ public class InsertParser extends SQLiteBaseListener {
         if (nodeValue.equalsIgnoreCase("insert")) {
             statement = new InsertStatement(nodeValue);
             statements.add(statement);
+            currentElement = Element.INSERT;
 
         } else if (nodeValue.equalsIgnoreCase("into")) {
+            if (currentElement != Element.INSERT) {
+                throw new InsertParserException("Missing insert statement");
+            }
             statement.withInto(nodeValue);
+            currentElement = Element.INTO;
 
         } else if (nodeValue.equalsIgnoreCase("values")) {
+            if (currentElement != Element.COLUMNNAMES) {
+                throw new InsertParserException("Missing columnnames");
+            }
             statement.withValues(nodeValue);
+            currentElement = Element.COLUMNVALUES;
 
-        } else if (currentElement == Element.INSERT_INTO_TABLENAME && nodeValue.equals(InsertStatement.PAREN_OPEN)) {
+        } else if (currentElement == Element.TABLENAME && nodeValue.equals(InsertStatement.PAREN_OPEN)) {
             currentElement = Element.COLUMNNAMES;
 
         } else if (currentElement == Element.COLUMNNAMES && nodeValue.equals(InsertStatement.PAREN_CLOSE)) {
-            currentElement = Element.VALUES;
 
         } else if (currentElement == Element.VALUES && nodeValue.equals(InsertStatement.PAREN_OPEN)) {
             currentElement = Element.COLUMNVALUES;
@@ -86,7 +96,7 @@ public class InsertParser extends SQLiteBaseListener {
             currentColumnValueContext = Optional.of(ctx);
         }
     };
-
+    
     public void exitExpr(ExprContext ctx) {
         if (this.currentColumnValueContext.isPresent() && currentColumnValueContext.get() == ctx) {
             currentColumnValueContext = Optional.empty();
@@ -105,5 +115,4 @@ public class InsertParser extends SQLiteBaseListener {
     public List<InsertStatement> getStatements() {
         return Collections.unmodifiableList(statements);
     }
-
 }

@@ -28,7 +28,14 @@ public class FormatServlet extends HttpServlet {
 
         setRequestAtts(request, cfg, sql);
 
-        String formatted = InsertFormatter.format(sql, cfg);
+        InsertFormatterResponse formatRs = InsertFormatter.format(sql, cfg);
+
+        final String formatted;
+        if (formatRs.isOk()) {
+            formatted = formatRs.getFormattedSql();
+        } else {
+            formatted = formatRs.getError();
+        }
 
         request.setAttribute("formatted", formatted);
         servletConfig.getServletContext().getRequestDispatcher("/format.jsp").forward(request, response);
@@ -49,7 +56,7 @@ public class FormatServlet extends HttpServlet {
         request.setAttribute("indent", cfg.getIndent());
         request.setAttribute("spacing", cfg.getSpacingBetweenValues());
         request.setAttribute("width", cfg.getLineWidth());
-        
+
         String permlink = createSettingsPermlink(request, cfg);
         request.setAttribute("permlink", permlink);
     }

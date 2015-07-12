@@ -28,7 +28,6 @@ public class InsertParserTest {
         String expected = resourceToString("insertParserTest.testParse.expected.txt");
         Config config = new Config().setLineWidth(80).setIndent(4).setSpacingBetweenValues(0);
         String actual = listener.getStatements().iterator().next().format(config);
-        System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }
 
