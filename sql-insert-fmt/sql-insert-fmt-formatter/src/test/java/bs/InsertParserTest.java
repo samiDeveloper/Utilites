@@ -26,8 +26,9 @@ public class InsertParserTest {
         walker.walk(listener, sqlStmtList);
 
         String expected = resourceToString("insertParserTest.testParse.expected.txt");
-        Config config = new Config().setLineWidth(60).setIndent(4).setSpacingBetweenValues(0);
+        Config config = new Config().setLineWidth(80).setIndent(4).setSpacingBetweenValues(0);
         String actual = listener.getStatements().iterator().next().format(config);
+        System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }
 
@@ -43,7 +44,8 @@ public class InsertParserTest {
         walker.walk(listener, sqlStmtList);
 
         String expected = resourceToString("insertParserTest.testParseMultiple.expected.txt");
-        String actual = InsertStatement.format(listener.getStatements());
+        Config config = new Config().setLineWidth(60).setIndent(4).setSpacingBetweenValues(0);
+        String actual = InsertStatement.format(listener.getStatements(), config);
         Assert.assertEquals(expected, actual);
     }
 

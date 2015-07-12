@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>sql-insert-fmt-parser</artifactId>
-  <name>sql-insert-fmt-parser</name>
+  <name>sql-insert-fmt-formatter</name>
   <url>http://maven.apache.org</url>
 
   <properties>

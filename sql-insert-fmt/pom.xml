@@ -8,7 +8,7 @@
   <name>sql-insert-fmt</name>
 
   <modules>
-    <module>sql-insert-fmt-parser</module>
+    <module>sql-insert-fmt-formatter</module>
     <module>sql-insert-fmt-web</module>
   </modules>
 
