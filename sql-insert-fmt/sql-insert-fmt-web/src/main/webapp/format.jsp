@@ -12,7 +12,7 @@
 	<h2>SQL Insert Statement Formatter</h2>
 	<form action="format" method="post">
 		<p>
-			<textarea name="sql" cols="100" rows="20"><c:out value='${sql}'/></textarea>
+			<textarea name="sql" cols="160" rows="20"><c:out value='${sql}'/></textarea>
 		</p>
 
 		<div class="table">
@@ -28,10 +28,13 @@
 			<p class="row">
 				<button type="submit">Format</button>
 			</p>
+            <p class="row">
+                <a href="<c:out value='${permlink}'/>">Settings permlink</a>
+            </p>
 		</div>
 	</form>
 	<p>
-		<textarea name="sql" cols="100" rows="20"><c:out value="${formatted}" /></textarea>
+		<textarea name="sql" cols="160" rows="20"><c:out value="${formatted}" /></textarea>
 	</p>
 </body>
 </html>

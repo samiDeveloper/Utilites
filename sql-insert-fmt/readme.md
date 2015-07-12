@@ -1,6 +1,6 @@
 This project exists because I don't like counting comma separated SQL stuff.
 
-Today many systems still use a SQL database. Very often existing software connecting to the database comes with SQL insert statements to setup test data. This project formats the SQL to a less unreadable form. It aligns the column names and the values. This allows one to match them more easily.
+Today many systems [still](http://blog.8thlight.com/uncle-bob/2012/05/15/NODB.html) use a SQL database. Very often existing software connecting to the database comes with SQL insert statements to setup test data. This project formats the SQL to a less unreadable form. It aligns the column names and the values. This allows one to match them more easily.
 
 It is under construction, working on the UI. The SQL parser and formatter both work. Check out the unit tests.
 
