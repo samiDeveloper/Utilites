@@ -38,6 +38,14 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.3.0.v20150612</version>
       </plugin>
+      <plugin>
+        <groupId>com.heroku.sdk</groupId>
+        <artifactId>heroku-maven-plugin</artifactId>
+        <version>0.4.4</version>
+        <configuration>
+          <appName>${artifactId}</appName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
