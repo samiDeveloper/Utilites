@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>sql-insert-fmt-parser</artifactId>
+      <artifactId>sql-insert-fmt-formatter</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>

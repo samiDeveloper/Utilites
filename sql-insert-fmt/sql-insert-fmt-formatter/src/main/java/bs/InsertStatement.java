@@ -107,6 +107,8 @@ public class InsertStatement {
         if (terminatedBySemicolon) {
             sb.append(SEMICOLON);
         }
+        
+        sb.append(NEWLINE);
 
         return sb.toString();
     }
