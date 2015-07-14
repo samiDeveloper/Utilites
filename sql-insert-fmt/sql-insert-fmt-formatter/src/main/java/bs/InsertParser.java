@@ -26,7 +26,9 @@ public class InsertParser extends SQLiteBaseListener {
 
     @Override
     public void enterInsert_stmt(Insert_stmtContext ctx) {
-        currentElement = Element.INSERT;
+        if (currentElement == Element.NONE || currentElement == Element.ENDED) {
+            currentElement = Element.INSERT;
+        }
     }
 
     @Override
@@ -79,7 +81,7 @@ public class InsertParser extends SQLiteBaseListener {
         } else if (currentElement == Element.COLUMNVALUES && !currentColumnValueContext.isPresent()
                 && nodeValue.equals(InsertStatement.PAREN_CLOSE)) {
 
-        } else if (currentElement == Element.COLUMNVALUES && !currentColumnValueContext.isPresent()
+        } else if ((currentElement == Element.COLUMNVALUES || currentElement == Element.ENDED) && !currentColumnValueContext.isPresent()
                 && nodeValue.equals(InsertStatement.SEMICOLON)) {
             statement.terminatedBySemicolon();
         }
@@ -98,7 +100,12 @@ public class InsertParser extends SQLiteBaseListener {
             currentColumnValueContext = Optional.of(ctx);
         }
     };
-    
+
+    @Override
+    public void exitInsert_stmt(Insert_stmtContext ctx) {
+        currentElement = Element.ENDED;
+    };
+
     public void exitExpr(ExprContext ctx) {
         if (this.currentColumnValueContext.isPresent() && currentColumnValueContext.get() == ctx) {
             currentColumnValueContext = Optional.empty();
