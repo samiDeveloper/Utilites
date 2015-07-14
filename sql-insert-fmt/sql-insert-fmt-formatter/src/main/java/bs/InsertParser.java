@@ -40,7 +40,9 @@ public class InsertParser extends SQLiteBaseListener {
 
     @Override
     public void enterColumn_name(Column_nameContext ctx) {
-        statement.withColumn(ctx.getText());
+        if (currentElement == Element.COLUMNNAMES) {
+            statement.withColumn(ctx.getText());
+        }
     }
 
     @Override
