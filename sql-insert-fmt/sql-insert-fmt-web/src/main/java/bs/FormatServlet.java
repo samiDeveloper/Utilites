@@ -56,6 +56,7 @@ public class FormatServlet extends HttpServlet {
         request.setAttribute("indent", cfg.getIndent());
         request.setAttribute("spacing", cfg.getSpacingBetweenValues());
         request.setAttribute("width", cfg.getLineWidth());
+        request.setAttribute("compact", cfg.isCompact());
 
         String permlink = createSettingsPermlink(request, cfg);
         request.setAttribute("permlink", permlink);
@@ -98,6 +99,17 @@ public class FormatServlet extends HttpServlet {
             cfg.setLineWidth(Integer.valueOf(request.getParameter("width")));
         } catch (NumberFormatException nfe) {
         }
+        try {
+            cfg.setCompact(parseCompactParam(request));
+        } catch (NumberFormatException nfe) {
+        }
+        
         return cfg;
+    }
+    
+    private static boolean parseCompactParam(HttpServletRequest request) {
+        String compactStr = request.getParameter("compact");
+        
+        return compactStr != null && compactStr.equals("on");
     }
 }

@@ -4,6 +4,7 @@ public class Config {
     private int spacingBetweenValues = 0;
     private int lineWidth = 120;
     private int indent = 4;
+    private boolean compact;
 
     public int getSpacingBetweenValues() {
         return spacingBetweenValues;
@@ -29,6 +30,15 @@ public class Config {
 
     public Config setIndent(int indent) {
         this.indent = indent;
+        return this;
+    }
+
+    public boolean isCompact() {
+        return compact;
+    }
+
+    public Config setCompact(boolean compact) {
+        this.compact = compact;
         return this;
     }
 }

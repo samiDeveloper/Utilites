@@ -48,6 +48,23 @@ public class InsertParserTest {
         Assert.assertEquals(expected, actual);
     }
 
+    @Test
+    public void testParseMultipleCompact() throws IOException {
+
+        String input = "/sqLiteParserTest.insert-multi.sql";
+
+        Sql_stmt_listContext sqlStmtList = createSqlStmtListContext(input);
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        InsertParser listener = new InsertParser();
+        walker.walk(listener, sqlStmtList);
+
+        String expected = resourceToString("insertParserTest.testParseMultiple-compact.expected.txt");
+        Config config = new Config().setLineWidth(60).setIndent(4).setSpacingBetweenValues(0).setCompact(true);
+        String actual = InsertStatement.format(listener.getStatements(), config);
+        Assert.assertEquals(expected, actual);
+    }
+
     private static Sql_stmt_listContext createSqlStmtListContext(String resource) throws IOException {
         InputStream is = InsertParserTest.class.getResourceAsStream(resource);
         SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));

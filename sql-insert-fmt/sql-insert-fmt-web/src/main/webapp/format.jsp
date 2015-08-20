@@ -25,6 +25,9 @@
 			<p class="row">
 				<label class="cell">Width</label><input class="cell" type="text" name="width" value="<c:out value='${width}'/>" />
 			</p>
+            <p class="row">
+                <label class="cell">Compact mode</label><input class="cell" type="checkbox" name="compact" <c:if test='${compact}'>checked</c:if> />
+            </p>
 			<p class="row">
 				<button type="submit">Format</button>
 			</p>

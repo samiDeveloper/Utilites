@@ -94,7 +94,11 @@ public class InsertStatement {
             return buildColumnPaddingString(c);
         });
 
-        sb.append(NEWLINE).append(PAREN_CLOSE).append(SPACE).append(values).append(SPACE).append(PAREN_OPEN);
+        if (!config.isCompact()) {
+            sb.append(NEWLINE);
+        }
+        
+        sb.append(PAREN_CLOSE).append(SPACE).append(values).append(SPACE).append(PAREN_OPEN);
 
         formatColumns(sb, config, numColsForEachLine, (ColumnNameAndValue c) -> {
             return c.getValue();
@@ -102,14 +106,20 @@ public class InsertStatement {
             return buildValuePaddingString(c);
         });
 
-        sb.append(NEWLINE).append(PAREN_CLOSE);
+        if (!config.isCompact()) {
+            sb.append(NEWLINE);
+        }
+        
+        sb.append(PAREN_CLOSE);
 
         if (terminatedBySemicolon) {
             sb.append(SEMICOLON);
         }
         
-        sb.append(NEWLINE);
-
+        if (!config.isCompact()) {
+            sb.append(NEWLINE);
+        }
+        
         return sb.toString();
     }
 
