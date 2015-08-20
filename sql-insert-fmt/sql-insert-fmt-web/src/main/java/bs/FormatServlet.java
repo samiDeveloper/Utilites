@@ -64,7 +64,9 @@ public class FormatServlet extends HttpServlet {
 
     private static String createSettingsPermlink(HttpServletRequest request, Config cfg) {
         String link = request.getRequestURL().append("?indent=").append(cfg.getIndent()).append("&spacing=")
-                .append(cfg.getSpacingBetweenValues()).append("&width=").append(cfg.getLineWidth()).toString();
+                .append(cfg.getSpacingBetweenValues()).append("&width=").append(cfg.getLineWidth()).append("&compact=")
+                .append(formatBooleanParam(cfg.isCompact())).toString();
+        
         return link;
     }
 
@@ -112,4 +114,13 @@ public class FormatServlet extends HttpServlet {
         
         return compactStr != null && compactStr.equals("on");
     }
+    
+    private static String formatBooleanParam(boolean b) {
+        if (b) {
+            return "on";
+        } else {
+            return "off";
+        }
+    }
+   
 }
