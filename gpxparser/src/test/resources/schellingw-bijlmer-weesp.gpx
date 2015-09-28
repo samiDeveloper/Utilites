@@ -18,16 +18,6 @@
         <ele>2.0000000</ele>
         <time>2010-01-01T00:00:52Z</time>
       </trkpt>
-    </trkseg>
-    <trkseg>
-      <trkpt lat="52.38534000" lon="4.959440000">
-        <ele>1.0000000</ele>
-        <time>2010-01-01T00:00:00Z</time>
-      </trkpt>
-      <trkpt lat="52.38458000" lon="4.961200000">
-        <ele>2.0000000</ele>
-        <time>2010-01-01T00:00:52Z</time>
-      </trkpt>
       <trkpt lat="52.38379000" lon="4.963270000">
         <ele>2.0000000</ele>
         <time>2010-01-01T00:01:52Z</time>

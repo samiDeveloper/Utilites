@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="creator" version="1.1" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>schellingw-bijlmer-weesp</name>
+    <link href="http://www.gpsies.com/">
+      <text>schellingw-bijlmer-weesp on GPSies.com</text>
+    </link>
+    <time>2013-05-09T11:08:09Z</time>
+  </metadata>
+  <trk>
+    <name>track1</name>
+    <trkseg>
+      <trkpt lat="52.38534000" lon="4.959440000">
+        <ele>1.0000000</ele>
+        <time>2010-01-01T00:00:00Z</time>
+      </trkpt>
+      <trkpt lat="52.38458000" lon="4.961200000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:00:52Z</time>
+      </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="52.38534000" lon="4.959440000">
+        <ele>1.0000000</ele>
+        <time>2010-01-01T00:00:00Z</time>
+      </trkpt>
+      <trkpt lat="52.38458000" lon="4.961200000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:00:52Z</time>
+      </trkpt>
+      <trkpt lat="52.38379000" lon="4.963270000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:01:52Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>track2</name>
+    <trkseg>
+      <trkpt lat="52.38458000" lon="4.961200000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:00:52Z</time>
+      </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="52.38458000" lon="4.961200000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:00:52Z</time>
+      </trkpt>
+      <trkpt lat="52.38379000" lon="4.963270000">
+        <ele>2.0000000</ele>
+        <time>2010-01-01T00:01:52Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+

@@ -37,7 +37,9 @@ public final class GpxParser {
         subscriber.handleEvent(new StartTrackEvent(trackName.orElse("<TZN>")));
         
         parseTrackSegments(r);
+        toEndElement(r, "trk");
         subscriber.handleEvent(new EndTrackEvent());
+        r.next();
     }
 
     private void parseTrackSegments(XMLStreamReader r) throws XMLStreamException {
