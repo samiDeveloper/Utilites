@@ -9,6 +9,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+/**
+ * <a href="http://www.topografix.com/gpx_manual.asp">GPX<a>
+ */
 public final class GpxParser {
     private final GpxParseEventSubscriber subscriber;
     
