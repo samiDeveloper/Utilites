@@ -13,6 +13,9 @@ h2-demo
 java8impatient
 : Solutions for the exercises in [Java SE 8 for the Really Impatient](https://www.informit.com/store/java-se-8-for-the-really-impatient-9780321927767)
 
+joystickdemo
+: Simple util shows how to integrate joystick input device in Java. Just polls the controllers and renders their state to the console.
+
 mult-bean-demo
 : Demo Spring bean lite mode. See also my [question on SO](http://stackoverflow.com/questions/26641349/why-does-this-java-based-spring-configuration-create-two-instances-of-a-singleto)
 
