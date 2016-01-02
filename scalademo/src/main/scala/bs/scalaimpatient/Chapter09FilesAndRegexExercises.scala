@@ -5,13 +5,17 @@ import java.io.PrintWriter
 import java.io.File
 import java.util.Scanner
 import scala.collection.JavaConversions
+import scala.collection.mutable.ArrayBuffer
+import java.io.ObjectOutputStream
+import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.FileInputStream
 
 // we read from resource instead of file
 object Chapter09FilesAndRegexExercises extends App {
 
-  val isreverse = getClass.getResourceAsStream("/chapter09.input.txt")
-
   // 1. reverse file lines
+  val isreverse = getClass.getResourceAsStream("/chapter09.input.txt")
   println("1. reverse file lines")
   val inputlines = Source.fromInputStream(isreverse).getLines.toArray
   println(inputlines.reverse.mkString("\n"))
@@ -64,7 +68,61 @@ object Chapter09FilesAndRegexExercises extends App {
   val pw = new PrintWriter("target/classes/chapter09.out.txt")
   pw.print(formatted)
   pw.close
-  
+
   // 6. quoted strings
+  println("6. quoted strings")
+  val isquoted = getClass.getResourceAsStream("/chapter09.quoted.txt")
+  val quoted = Source.fromInputStream(isquoted).mkString
+  val quotpattern = """"(?:\\"|.)*?"""".r
+  for (q <- quotpattern.findAllMatchIn(quoted)) println("found: '" + q + "'");
+  println
+
+  // 7. non float
+  println("7. non float")
+  val isfloatz = getClass.getResourceAsStream("/chapter09.regexnotfloat.txt")
+  val hazfloatz = Source.fromInputStream(isfloatz).mkString
+  val nonfloatz = hazfloatz.split("""\s?-?(\d\.\d*|\.\d+)\s?""").toList;
+  println(nonfloatz)
+
+  // 8. filter img src
+  println("8. filter img src")
+  val html = Source.fromURL("https://bitbucket.org/bartswen/bsonify/").mkString;
+  println("html: " + html.substring(0, 100) + "...")
+  println("images src:")
+  val imgptrn = """<img.+src=['"]([^"']+)['"]""".r
+  for (imgptrn(srcval) <- imgptrn.findAllIn(html)) println(srcval)
+
+  // 9. count .class files in tree
+  println("9. count .class files")
+  val dir = new File("target/classes")
+  def countfiles(dir: File): Int = {
+    val classcount = dir.listFiles().filter(_.getName.endsWith(".class")).size
+    val childcount = dir.listFiles().filter(_.isDirectory()).map(countfiles(_)).foldLeft(0)(_ + _)
+    classcount + childcount
+  }
+  println("count .class files in '" + dir.getName + "' tree: " + countfiles(dir))
+
+  // 10. (de)serialize
+  println("10. (de)serialize")
+  class Person(val name: String, val friends: Array[Person]=Array()) extends Serializable {
+    override def toString = {
+      name + ", friends: [" + friends.mkString(", ") + "]"
+    }
+  }
+  val eduardo=new Person("Edouard Bracame")
+  val guido=new Person("Guido Brasletti")
+  val jean=new Person("Jean Manchzeck")
+  val joe=new Person("Joe", Array(eduardo, guido, jean))
+  println(joe)
+  println("now write and read joe...")
   
+  val out=new ObjectOutputStream(new FileOutputStream("target/friends"))
+  out.writeObject(joe)
+  out.close
+  println("write done")
+  val in = new ObjectInputStream(new FileInputStream("target/friends"))
+  val joeRead=in.readObject().asInstanceOf[Person]
+  in.close
+  println("joe read: " + joeRead)
+
 }
