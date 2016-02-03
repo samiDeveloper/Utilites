@@ -143,8 +143,8 @@ object Chapter14PatternMatchingExercises extends App {
     (x: Double) => r(x).flatMap(l(_)) // must apply r first to get to the results as in the example
   }
 
-  def f(x: Double) = if (x >= 0) Some(math.sqrt(x)) else None
   def g(x: Double) = if (x != 1) Some(1 / (x - 1)) else None
+  def f(x: Double) = if (x >= 0) Some(math.sqrt(x)) else None
   def h = compose(f, g)
 
   println(h(2)) // Some(1.0)
