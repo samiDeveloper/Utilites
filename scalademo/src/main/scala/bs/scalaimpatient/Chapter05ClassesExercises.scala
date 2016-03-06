@@ -1,7 +1,6 @@
 package bs.scalaimpatient
 
 import scala.beans.BeanProperty
-import sun.org.mozilla.javascript.internal.BeanProperty
 
 object Chapter05ClassesExercises extends App {
   // 1. counter
