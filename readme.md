@@ -25,4 +25,7 @@ scalademo
 sql-insert-fmt
 : Formats SQL insert statements by aligning columnnames and values
 
+multi-context-demo
+: Aggregates multiple functional modules in one application
+
 
