@@ -1,84 +1,26 @@
 package bs.app;
 
-import javax.persistence.EntityManagerFactory;
+import java.sql.SQLException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.FactoryBean;
+import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaDialect;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-// TODO move bs.customer scan and transactionmanagement to domain project
 @Configuration
-@EnableTransactionManagement(proxyTargetClass=true)
-@ComponentScan(basePackages = { "bs.app", "bs.order", "bs.customer" })
+@EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:application.properties")
 public class AppConfig {
     @Autowired
-    Environment env;
-
-    @Bean(name="entityManagerFactoryCustomer")
-    public FactoryBean<EntityManagerFactory> entityManagerFactoryCustomer() {
-        LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
-        emfBean.setPersistenceXmlLocation("classpath:META-INF/persistence-customer.xml");
-        emfBean.setPersistenceUnitName("multi-ctx-customer");
-        emfBean.setDataSource(dataSource());
-        emfBean.setJpaVendorAdapter(jpaVendorAdapter());
-        emfBean.setJpaDialect(jpaDialect());
-        return emfBean;
-    }
-
-    @Bean(name="transactionManagerCustomer")
-    public PlatformTransactionManager transactionManagerCustomer() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-
-        try {
-            transactionManager.setEntityManagerFactory(entityManagerFactoryCustomer().getObject());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        
-        transactionManager.setJpaDialect(jpaDialect());
-        transactionManager.setDataSource(dataSource());
-        return transactionManager;
-    }
-
-    @Bean(name="entityManagerFactoryOrder")
-    public FactoryBean<EntityManagerFactory> entityManagerFactoryOrder() {
-        LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
-        emfBean.setPersistenceXmlLocation("classpath:META-INF/persistence-order.xml");
-        emfBean.setPersistenceUnitName("multi-ctx-order");
-        emfBean.setDataSource(dataSource());
-        emfBean.setJpaVendorAdapter(jpaVendorAdapter());
-        emfBean.setJpaDialect(jpaDialect());
-        return emfBean;
-    }
-    
-    @Bean(name="transactionManagerOrder")
-    public PlatformTransactionManager transactionManagerOrder() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-
-        try {
-            transactionManager.setEntityManagerFactory(entityManagerFactoryOrder().getObject());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        
-        transactionManager.setJpaDialect(jpaDialect());
-        transactionManager.setDataSource(dataSource());
-        return transactionManager;
-    }
+    private Environment env;
 
     @Bean
     public HibernateJpaVendorAdapter jpaVendorAdapter() {
@@ -103,13 +45,17 @@ public class AppConfig {
         ds.setPassword(env.getProperty("jdbc.password"));
         ds.setUrl(env.getProperty("jdbc.url"));
         ds.setMaxActive(10);
-        
-        // assume h2 here and expose a port to connect remotely using url 'jdbc:hsqldb:tcp://localhost:9092/mem:multi-ctx-db;IFEXISTS=TRUE'
-//        org.hsqldb.Server server = new org.hsqldb.Server();
-//        server.setDaemon(true);
-//        server.setPort(9092);
-//        server.start();
-        
+
+        try {
+
+            // assume h2 here and expose a port to connect remotely using url
+            // 'jdbc:h2db:tcp://localhost:9092/mem:multi-ctx-db;IFEXISTS=TRUE'
+            Server.createTcpServer("-tcpDaemon", "-tcpPort", "9092").start();
+            
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return ds;
     }
 }

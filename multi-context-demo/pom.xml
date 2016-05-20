@@ -17,10 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.6.RELEASE</spring.version>
         <hibernate.version>4.2.4.Final</hibernate.version>
+        <lombok.version>1.16.8</lombok.version>
         <servlet.version>3.1.0</servlet.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <jstl.version>1.2</jstl.version>
-        <hsql.version>2.3.0</hsql.version>
+        <h2.version>1.4.184</h2.version>
     </properties>
 
     <build>
@@ -28,6 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
                 <configuration>
                     <compilerVersion>1.8</compilerVersion>
                     <source>1.8</source>
@@ -37,21 +39,4 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>4.2.6.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.2.6.RELEASE</version>
-        </dependency>
-    </dependencies>
 </project>
