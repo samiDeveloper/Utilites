@@ -49,6 +49,7 @@
         </executions>
       </plugin>
     </plugins>
+    <finalName>my-program</finalName>
   </build>
 
   <dependencies>
