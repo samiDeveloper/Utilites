@@ -92,6 +92,7 @@ public class InterceptBeanNameConfig
                 Advisor beanNameExposer = ExposeBeanNameAdvisors.createAdvisorWithoutIntroduction(beanName);
                 advisorsList.add(beanNameExposer);
 
+                // Add an advisor picking up the bean name
                 advisorsList.add(myAdvisor());
 
                 if (advisors != null)
