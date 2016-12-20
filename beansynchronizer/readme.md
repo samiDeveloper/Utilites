@@ -18,8 +18,6 @@ To integrate bean synchronization in an application
 
 DataSourceBeanLocker (extract interface from MapBeanLocker). See also TODO in SynchronizeInterceptor
 
-Parallel and random order test
-
 Add lockduration to @Synchronized
 
 Keep lock while invocation in progress, or at least update the lock if already got it see MapBeanLocker scenario 'got the lock'
