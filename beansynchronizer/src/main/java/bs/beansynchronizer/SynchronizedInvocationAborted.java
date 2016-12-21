@@ -7,4 +7,13 @@ package bs.beansynchronizer;
 public class SynchronizedInvocationAborted extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
+
+    public SynchronizedInvocationAborted() {
+        super();
+    }
+
+    public SynchronizedInvocationAborted(String message) {
+        super(message);
+    }
+
 }

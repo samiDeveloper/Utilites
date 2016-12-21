@@ -16,8 +16,9 @@ To integrate bean synchronization in an application
 
 **Whishlist and ideas**
 
+Keep lock while invocation in progress, or at least update the lock if already got it see MapBeanLocker scenario 'got the lock'
+
 DataSourceBeanLocker (extract interface from MapBeanLocker). See also TODO in SynchronizeInterceptor
 
 Add lockduration to @Synchronized
 
-Keep lock while invocation in progress, or at least update the lock if already got it see MapBeanLocker scenario 'got the lock'

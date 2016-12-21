@@ -1,8 +1,6 @@
 package bs.beansynchronizer;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
 import java.util.UUID;
 
 import org.junit.After;

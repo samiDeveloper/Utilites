@@ -51,12 +51,13 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
         if (amActiveClient)
         {
-            LOG.debug("Proceed bean invocation on active instance");
+            LOG.debug("Proceed bean invocation");
             return invocation.proceed();
         } else
         {
-            LOG.debug("Abort bean invocation on inactive instance");
-            throw new SynchronizedInvocationAborted();
+            LOG.debug("Abort bean invocation because got no lock");
+            String errMsg = String.format("Target bean name: '%s', invocation: %s", targetBeanName, invocation);
+            throw new SynchronizedInvocationAborted(errMsg);
         }
     }
 
