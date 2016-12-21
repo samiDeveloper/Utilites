@@ -11,12 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import junit.framework.AssertionFailedError;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { SynchronizeConfig.class, SynchronizeTestConfig.class })
 public class SynchronizeInterceptorTest
 {
+    private static final int EXPIRY = Synchronized.DEFAULT_EXPIRY_MINUTES;
     @Autowired
     private BarSpy barSpy;
+
+    @Autowired
+    private Foo foo;
 
     @Autowired
     private MapBeanLocker beanLocker;
@@ -46,10 +52,11 @@ public class SynchronizeInterceptorTest
         BeanName targetBean = BeanName.of("bar-customname"); // corresponds to bar's beanname in SynchronizeTestConfig
         UUID testClientId = UUID.randomUUID();
 
-        beanLocker.acquireLock(testClientId, targetBean); // simulates another node getting the lock
+        beanLocker.acquireLock(testClientId, targetBean, EXPIRY); // simulates another node
+                                                                  // getting the lock
 
         // 1 millis before expiry
-        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
+        clock.update(clock.instant().plus(EXPIRY, ChronoUnit.MINUTES).minusMillis(1));
 
         try
         {
@@ -70,9 +77,9 @@ public class SynchronizeInterceptorTest
         BeanName targetBean = BeanName.of("bar-customname");
         UUID testClientId = UUID.randomUUID();
 
-        beanLocker.acquireLock(testClientId, targetBean);
+        beanLocker.acquireLock(testClientId, targetBean, EXPIRY);
 
-        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES));
+        clock.update(clock.instant().plus(EXPIRY, ChronoUnit.MINUTES));
 
         try
         {
@@ -88,14 +95,32 @@ public class SynchronizeInterceptorTest
     {
 
         barSpy.go();
-        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
+        clock.update(clock.instant().plus(EXPIRY, ChronoUnit.MINUTES).minusMillis(1));
         barSpy.go();
-        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
+        clock.update(clock.instant().plus(EXPIRY, ChronoUnit.MINUTES).minusMillis(1));
 
         BeanName targetBean = BeanName.of("bar-customname");
         UUID testClientId = UUID.randomUUID();
-        boolean actualOtherNodeLock = beanLocker.acquireLock(testClientId, targetBean);
-        
+        boolean actualOtherNodeLock = beanLocker.acquireLock(testClientId, targetBean, EXPIRY);
+
         Assert.assertFalse("Expected unable to acquire lock", actualOtherNodeLock);
     }
+
+    @Test
+    public void testBeanLockCustomExpiry()
+    {
+        // Note that Synchronized.DEFAULT_EXPIRY_MINUTES > Foo.EXPIRY_MINS
+
+        foo.start();
+
+        clock.update(clock.instant().plus(Foo.EXPIRY_MINS, ChronoUnit.MINUTES));
+        
+        BeanName targetBean = BeanName.of("foo");
+        UUID testClientId = UUID.randomUUID();
+        boolean actualOtherNodeLock = beanLocker.acquireLock(testClientId, targetBean, Foo.EXPIRY_MINS);
+
+        // shows that the foo annotation's expiry is actually applied to the lock
+        Assert.assertTrue("Expected able to acquire lock", actualOtherNodeLock);
+    }
+
 }

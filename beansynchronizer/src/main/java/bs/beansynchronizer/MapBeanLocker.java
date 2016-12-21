@@ -23,13 +23,13 @@ class MapBeanLocker
     Clock clock;
 
     /** True means that the client has clearance to access the bean identified by targetBean */
-    public boolean acquireLock(UUID clientId, BeanName targetBean)
+    public boolean acquireLock(UUID clientId, BeanName targetBean, int expiryMins)
     {
         val now = clock.instant();
         Function<? super BeanName, ? extends Lock> f = (Void) -> Lock.forClient(clientId, now);
         val existingLock = beanLocks.get(targetBean);
 
-        if (existingLock == null || !existingLock.isValidAt(now))
+        if (existingLock == null || !existingLock.isValidAt(now, expiryMins))
         {
             // absent or expired, take the lock
             beanLocks.put(targetBean, f.apply(targetBean));

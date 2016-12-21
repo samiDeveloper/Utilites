@@ -9,15 +9,13 @@ import lombok.Data;
 @Data(staticConstructor="forClient")
 final class Lock
 {
-    public static final int EXPIRY_MINUTES = 2;
-
     private final UUID clientId;
     private final Instant issuedInstant;
 
     /** Returns true if not expired according to the specified instant */
-    public boolean isValidAt(Instant issuedInstant)
+    public boolean isValidAt(Instant issued, int expiryMins)
     {
-        if (issuedInstant.minus(EXPIRY_MINUTES, ChronoUnit.MINUTES).isBefore(issuedInstant))
+        if (issued.minus(expiryMins, ChronoUnit.MINUTES).isBefore(issuedInstant))
         {
             return true;
         } else

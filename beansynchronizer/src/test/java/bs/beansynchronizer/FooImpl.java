@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import bs.beansynchronizer.Synchronized;
 
-@Synchronized
+@Synchronized(lockExpiryMins = Foo.EXPIRY_MINS)
 public class FooImpl implements Foo
 {
     @Autowired

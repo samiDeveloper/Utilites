@@ -46,8 +46,8 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
         // String dataSourceName = figureDataSourceName(invocation);
         // DataSource ds = applicationContext.getBean(dataSourceName, DataSource.class);
-
-        boolean amActiveClient = beanLocker.acquireLock(MY_CLIENT_ID, BeanName.of(targetBeanName));
+        int expiryMinutes = figureExpiryMinutes(invocation);
+        boolean amActiveClient = beanLocker.acquireLock(MY_CLIENT_ID, BeanName.of(targetBeanName), expiryMinutes);
 
         if (amActiveClient)
         {
@@ -83,6 +83,14 @@ public class SynchronizeInterceptor implements MethodInterceptor
         Synchronized syncAnno = targetClass.getAnnotation(Synchronized.class);
         String dataSourceName = syncAnno.dataSource();
         return dataSourceName;
+    }
+
+    private int figureExpiryMinutes(MethodInvocation invocation)
+    {
+        Class<?> targetClass = invocation.getThis().getClass();
+        Synchronized syncAnno = targetClass.getAnnotation(Synchronized.class);
+        int expiryMins = syncAnno.lockExpiryMins();
+        return expiryMins;
     }
 
 }

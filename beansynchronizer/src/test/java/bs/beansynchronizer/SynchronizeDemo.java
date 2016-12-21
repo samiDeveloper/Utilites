@@ -3,7 +3,6 @@ package bs.beansynchronizer;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +20,7 @@ public class SynchronizeDemo
         MapBeanLocker beanLocker = ctx.getBean(MapBeanLocker.class);
 
         // simulate another node to acquire the lock on the Bar bean
-        beanLocker.acquireLock(UUID.randomUUID(), BeanName.of(BAR_CUSTOMNAME));
+        beanLocker.acquireLock(UUID.randomUUID(), BeanName.of(BAR_CUSTOMNAME), Synchronized.DEFAULT_EXPIRY_MINUTES);
 
         // the foo invocation will proceed...
         try

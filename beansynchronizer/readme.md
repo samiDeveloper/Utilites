@@ -18,5 +18,4 @@ To integrate bean synchronization in an application
 
 DataSourceBeanLocker (extract interface from MapBeanLocker). See also TODO in SynchronizeInterceptor
 
-Add lockduration to @Synchronized
 
