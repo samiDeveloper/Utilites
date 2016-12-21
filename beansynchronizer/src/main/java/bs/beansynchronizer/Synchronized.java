@@ -10,11 +10,14 @@ import java.lang.annotation.Target;
  * Marks spring beans of which only one instance is to be active at a time across multiple JVMs. Useful for clustered
  * environments where background tasks run, like batch jobs and scheduled processes. It differs from conventional
  * synchronization in that clients do not wait for a lock if they cannot obtain a lock, instead the bean invocation is
- * <strong>aborted</strong>. Invocations on @Synchronized beans throw a {@link SynchronizedInvocationAborted} if the target bean instance is unable
- * to acquire a lock.
+ * <strong>aborted</strong>. Invocations on @Synchronized beans throw a {@link SynchronizedInvocationAborted} if the
+ * interceptor is unable to acquire a lock.
  * 
  * <p>
- * It works using a lock in a central database. The {@link SynchronizeInterceptor} implements the synchronization.
+ * It works using a lock in a central database. A spring AOP interceptor acquires the lock. When a @Synchronized bean
+ * invocation happens, and the interceptor acquires or owns a lock, then the lock remains valid for this node (JVM) for
+ * a period of time. Then it expires and another node might take the lock. The {@link SynchronizeInterceptor} implements
+ * the main synchronization logic.
  * 
  * <p>
  * Place this annotation on the class, not the interface. See

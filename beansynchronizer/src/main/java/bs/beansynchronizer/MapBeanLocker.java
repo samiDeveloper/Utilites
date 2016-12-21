@@ -1,6 +1,7 @@
 package bs.beansynchronizer;
 
 import java.time.Clock;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -26,19 +27,21 @@ class MapBeanLocker
     {
         val now = clock.instant();
         Function<? super BeanName, ? extends Lock> f = (Void) -> Lock.forClient(clientId, now);
-        val existingLock = beanLocks.computeIfAbsent(targetBean, f);
+        val existingLock = beanLocks.get(targetBean);
 
-        if (!existingLock.isValidAt(now))
+        if (existingLock == null || !existingLock.isValidAt(now))
         {
-            // expired, take the lock
-            beanLocks.putIfAbsent(targetBean, f.apply(targetBean));
+            // absent or expired, take the lock
+            beanLocks.put(targetBean, f.apply(targetBean));
             return true;
         } else if (existingLock.isOwnedBy(clientId))
         {
             // got the lock
+            beanLocks.put(targetBean, existingLock.renew(now));
             return true;
         } else
         {
+            // lock is owned by another node
             return false;
         }
     }

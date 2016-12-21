@@ -15,9 +15,9 @@ final class Lock
     private final Instant issuedInstant;
 
     /** Returns true if not expired according to the specified instant */
-    public boolean isValidAt(Instant now)
+    public boolean isValidAt(Instant issuedInstant)
     {
-        if (now.minus(EXPIRY_MINUTES, ChronoUnit.MINUTES).isBefore(issuedInstant))
+        if (issuedInstant.minus(EXPIRY_MINUTES, ChronoUnit.MINUTES).isBefore(issuedInstant))
         {
             return true;
         } else
@@ -29,5 +29,10 @@ final class Lock
     public boolean isOwnedBy(UUID clientId)
     {
         return clientId.equals(this.clientId);
+    }
+
+    public Lock renew(Instant issuedInstant)
+    {
+        return Lock.forClient(clientId, issuedInstant);
     }
 }

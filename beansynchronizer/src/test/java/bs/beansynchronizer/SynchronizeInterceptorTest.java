@@ -20,7 +20,7 @@ public class SynchronizeInterceptorTest
 
     @Autowired
     private MapBeanLocker beanLocker;
-    
+
     @Autowired
     private MutableClockStub clock;
 
@@ -50,7 +50,7 @@ public class SynchronizeInterceptorTest
 
         // 1 millis before expiry
         clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
-        
+
         try
         {
             barSpy.go();
@@ -63,17 +63,17 @@ public class SynchronizeInterceptorTest
         beanLocker.releaseAllLocks(); // release lock to be able to inspect the spy
         Assert.assertFalse(barSpy.goInvoked());
     }
-    
+
     @Test
     public void testBeanLockExpired()
     {
         BeanName targetBean = BeanName.of("bar-customname");
         UUID testClientId = UUID.randomUUID();
-        
+
         beanLocker.acquireLock(testClientId, targetBean);
-        
+
         clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES));
-        
+
         try
         {
             barSpy.go();
@@ -81,5 +81,21 @@ public class SynchronizeInterceptorTest
         {
             Assert.fail("Unexpected SynchronizedExecutedAborted");
         }
+    }
+
+    @Test
+    public void testBeanLockExtendLock()
+    {
+
+        barSpy.go();
+        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
+        barSpy.go();
+        clock.update(clock.instant().plus(Lock.EXPIRY_MINUTES, ChronoUnit.MINUTES).minusMillis(1));
+
+        BeanName targetBean = BeanName.of("bar-customname");
+        UUID testClientId = UUID.randomUUID();
+        boolean actualOtherNodeLock = beanLocker.acquireLock(testClientId, targetBean);
+        
+        Assert.assertFalse("Expected unable to acquire lock", actualOtherNodeLock);
     }
 }
