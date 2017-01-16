@@ -16,6 +16,6 @@ To integrate bean synchronization in an application
 
 **Whishlist and ideas**
 
-DataSourceBeanLocker (extract interface from MapBeanLocker). See also TODO in SynchronizeInterceptor
+DataSourceBeanLocker (extract interface from MapBeanLocker). See TODOs
 
 

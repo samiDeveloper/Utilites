@@ -36,7 +36,7 @@ public class SynchronizeTestConfig
      */
     @Scope(THREAD_SCOPE)
     @Bean
-    public MapBeanLocker beanLocker()
+    public BeanLocker beanLocker()
     {
         return new MapBeanLocker(clock());
     }

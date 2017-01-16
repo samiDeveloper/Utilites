@@ -25,13 +25,13 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
     private static final UUID MY_CLIENT_ID = UUID.randomUUID();
 
-    private final MapBeanLocker beanLocker;
+    private final BeanLocker beanLocker;
 
     // TODO extract BeanLocker interface, datasource implementation is itself a bean and gets the ds injected, remove
     // aC here.
     private final ApplicationContext applicationContext;
 
-    public SynchronizeInterceptor(MapBeanLocker beanLocker, ApplicationContext applicationContext) {
+    public SynchronizeInterceptor(BeanLocker beanLocker, ApplicationContext applicationContext) {
         super();
         this.beanLocker = beanLocker;
         this.applicationContext = applicationContext;

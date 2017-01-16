@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import junit.framework.AssertionFailedError;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { SynchronizeConfig.class, SynchronizeTestConfig.class })
 public class SynchronizeInterceptorTest
@@ -25,7 +23,7 @@ public class SynchronizeInterceptorTest
     private Foo foo;
 
     @Autowired
-    private MapBeanLocker beanLocker;
+    private BeanLocker beanLocker;
 
     @Autowired
     private MutableClockStub clock;

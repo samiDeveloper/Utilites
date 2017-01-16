@@ -34,7 +34,7 @@ public class SynchronizeConfig implements ApplicationContextAware
     private ApplicationContext applicationContext;
 
     @Bean
-    public MapBeanLocker beanLocker() {
+    public BeanLocker beanLocker() {
         return new MapBeanLocker(clock);
     }
 

@@ -1,7 +1,6 @@
 package bs.beansynchronizer;
 
 import java.time.Clock;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,7 +13,7 @@ import lombok.val;
 
 /** Stores bean synchronization lock in a Map, only for testing purposes */
 @Value
-class MapBeanLocker
+class MapBeanLocker implements BeanLocker
 {
     @Getter(AccessLevel.NONE)
     ConcurrentMap<BeanName, Lock> beanLocks = new ConcurrentHashMap<>();
@@ -23,6 +22,7 @@ class MapBeanLocker
     Clock clock;
 
     /** True means that the client has clearance to access the bean identified by targetBean */
+    @Override
     public boolean acquireLock(UUID clientId, BeanName targetBean, int expiryMins)
     {
         val now = clock.instant();
@@ -46,6 +46,7 @@ class MapBeanLocker
         }
     }
 
+    @Override
     public void releaseAllLocks()
     {
         beanLocks.clear();

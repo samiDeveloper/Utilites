@@ -17,7 +17,7 @@ public class SynchronizeDemo
     {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SynchronizeConfig.class, SynchronizeDemo.class);
         Foo foo = ctx.getBean(Foo.class);
-        MapBeanLocker beanLocker = ctx.getBean(MapBeanLocker.class);
+        BeanLocker beanLocker = ctx.getBean(MapBeanLocker.class);
 
         // simulate another node to acquire the lock on the Bar bean
         beanLocker.acquireLock(UUID.randomUUID(), BeanName.of(BAR_CUSTOMNAME), Synchronized.DEFAULT_EXPIRY_MINUTES);
@@ -34,7 +34,7 @@ public class SynchronizeDemo
     }
 
     @Bean
-    public MapBeanLocker beanLocker()
+    public BeanLocker beanLocker()
     {
         return new MapBeanLocker(clock());
     }
