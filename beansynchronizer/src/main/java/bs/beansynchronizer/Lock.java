@@ -11,9 +11,10 @@ final class Lock
 {
     private final UUID clientId;
     private final Instant issuedInstant;
+    private final int expiryMins;
 
     /** Returns true if not expired according to the specified instant */
-    public boolean isValidAt(Instant issued, int expiryMins)
+    public boolean isValidAt(Instant issued)
     {
         if (issued.minus(expiryMins, ChronoUnit.MINUTES).isBefore(issuedInstant))
         {
@@ -31,6 +32,6 @@ final class Lock
 
     public Lock renew(Instant issuedInstant)
     {
-        return Lock.forClient(clientId, issuedInstant);
+        return Lock.forClient(clientId, issuedInstant, expiryMins);
     }
 }

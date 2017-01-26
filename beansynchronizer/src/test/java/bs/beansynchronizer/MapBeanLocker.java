@@ -26,10 +26,10 @@ class MapBeanLocker implements BeanLocker
     public boolean acquireLock(UUID clientId, BeanName targetBean, int expiryMins)
     {
         val now = clock.instant();
-        Function<? super BeanName, ? extends Lock> f = (Void) -> Lock.forClient(clientId, now);
+        Function<? super BeanName, ? extends Lock> f = (Void) -> Lock.forClient(clientId, now, expiryMins);
         val existingLock = beanLocks.get(targetBean);
 
-        if (existingLock == null || !existingLock.isValidAt(now, expiryMins))
+        if (existingLock == null || !existingLock.isValidAt(now))
         {
             // absent or expired, take the lock
             beanLocks.put(targetBean, f.apply(targetBean));
