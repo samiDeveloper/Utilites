@@ -20,7 +20,7 @@ public class SynchronizeDemo
         BeanLocker beanLocker = ctx.getBean(MapBeanLocker.class);
 
         // simulate another node to acquire the lock on the Bar bean
-        beanLocker.acquireLock(UUID.randomUUID(), BeanName.of(BAR_CUSTOMNAME), Synchronized.DEFAULT_EXPIRY_MINUTES);
+        beanLocker.acquireLock(UUID.randomUUID(), BeanName.of(BAR_CUSTOMNAME), Synchronized.DEFAULT_EXPIRY_SECONDS);
 
         // the foo invocation will proceed...
         try

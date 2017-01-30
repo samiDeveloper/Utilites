@@ -4,7 +4,14 @@ import java.util.UUID;
 
 interface BeanLocker
 {
-    void releaseAllLocks();
+    /** True means that the client has clearance to access the bean identified by targetBean */
+    boolean acquireLock(UUID clientId, BeanName targetBean, int expirySecs);
 
-    boolean acquireLock(UUID clientId, BeanName targetBean, int expiryMins);
+    void releaseLocksForClient(UUID clientId);
+
+    void releaseAllLocks();
+    
+    int size();
+    
+    void cleanupExpired();
 }

@@ -4,19 +4,19 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data(staticConstructor="forClient")
+@Value(staticConstructor = "forClient")
 final class Lock
 {
-    private final UUID clientId;
-    private final Instant issuedInstant;
-    private final int expiryMins;
+    UUID clientId;
+    Instant issuedInstant;
+    int expirySecs;
 
     /** Returns true if not expired according to the specified instant */
-    public boolean isValidAt(Instant issued)
+    public boolean isValidAt(Instant target)
     {
-        if (issued.minus(expiryMins, ChronoUnit.MINUTES).isBefore(issuedInstant))
+        if (target.isBefore(issuedInstant.plus(expirySecs, ChronoUnit.SECONDS)))
         {
             return true;
         } else
@@ -30,8 +30,9 @@ final class Lock
         return clientId.equals(this.clientId);
     }
 
-    public Lock renew(Instant issuedInstant)
+    public Lock renew(Instant newIssuedInstant)
     {
-        return Lock.forClient(clientId, issuedInstant, expiryMins);
+        Lock renewed = Lock.forClient(clientId, newIssuedInstant, expirySecs);
+        return renewed;
     }
 }

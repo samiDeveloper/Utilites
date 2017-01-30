@@ -31,10 +31,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Synchronized
 {
-    public static final int DEFAULT_EXPIRY_MINUTES = 2;
+    public static final int DEFAULT_EXPIRY_SECONDS = 2*60;
 
     String dataSource() default "processMgrDataSource";
 
     /** Number of minutes the lock remains valid when no invocation happens */
-    int lockExpiryMins() default DEFAULT_EXPIRY_MINUTES;
+    int lockExpirySecs() default DEFAULT_EXPIRY_SECONDS;
 }

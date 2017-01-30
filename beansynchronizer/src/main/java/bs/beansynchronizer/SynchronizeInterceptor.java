@@ -27,7 +27,7 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
     private final BeanLocker beanLocker;
 
-    // TODO extract BeanLocker interface, datasource implementation is itself a bean and gets the ds injected, remove
+    // TODO 60. Remove appContext from SyncInterceptor. Datasource implementation is itself a bean and gets the ds injected, remove
     // aC here.
     private final ApplicationContext applicationContext;
 
@@ -46,10 +46,10 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
         // String dataSourceName = figureDataSourceName(invocation);
         // DataSource ds = applicationContext.getBean(dataSourceName, DataSource.class);
-        int expiryMinutes = figureExpiryMinutes(invocation);
-        boolean amActiveClient = beanLocker.acquireLock(MY_CLIENT_ID, BeanName.of(targetBeanName), expiryMinutes);
+        int expirySeconds= figureExpirySecs(invocation);
+        boolean haveLock = beanLocker.acquireLock(MY_CLIENT_ID, BeanName.of(targetBeanName), expirySeconds);
 
-        if (amActiveClient)
+        if (haveLock)
         {
             LOG.debug("Proceed bean invocation");
             return invocation.proceed();
@@ -85,12 +85,12 @@ public class SynchronizeInterceptor implements MethodInterceptor
         return dataSourceName;
     }
 
-    private int figureExpiryMinutes(MethodInvocation invocation)
+    private int figureExpirySecs(MethodInvocation invocation)
     {
         Class<?> targetClass = invocation.getThis().getClass();
         Synchronized syncAnno = targetClass.getAnnotation(Synchronized.class);
-        int expiryMins = syncAnno.lockExpiryMins();
-        return expiryMins;
+        int expirySecs = syncAnno.lockExpirySecs();
+        return expirySecs;
     }
 
 }

@@ -1,7 +1,5 @@
 package bs.beansynchronizer;
 
-import bs.beansynchronizer.Synchronized;
-
 @Synchronized
 public class BarImpl implements Bar
 {

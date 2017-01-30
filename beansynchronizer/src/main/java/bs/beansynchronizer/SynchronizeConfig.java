@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.Advisor;
@@ -15,6 +17,7 @@ import org.springframework.aop.interceptor.ExposeBeanNameAdvisors;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -31,13 +34,21 @@ public class SynchronizeConfig implements ApplicationContextAware
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private DataSource dataSource;
+
     private ApplicationContext applicationContext;
 
     @Bean
     public BeanLocker beanLocker()
     {
-        // TODO Create DataSourceBeanLocker
-        return new DataSourceBeanLocker(null);
+        return new DataSourceBeanLocker(dataSource, beanSyncTablePrefix(), clock);
+    }
+
+    @Bean
+    public BeanSyncTablePrefix beanSyncTablePrefix()
+    {
+        return BeanSyncTablePrefix.empty();
     }
 
     /**
@@ -80,11 +91,9 @@ public class SynchronizeConfig implements ApplicationContextAware
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName,
-                    TargetSource targetSource)
+            protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource)
             {
-                LOG.info("Extend advisors chain with beanname exposer and sync advisor for bean '{}' of type '{}'",
-                        beanName, beanClass);
+                LOG.info("Extend advisors chain with beanname exposer and sync advisor for bean '{}' of type '{}'", beanName, beanClass);
 
                 List<Object> advisorsList = new ArrayList<>();
 

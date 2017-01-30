@@ -11,11 +11,10 @@ Demo: run `SynchronizeDemo.java`
 To integrate bean synchronization in an application
 
 1. Include the `SynchronizeConfig` java based spring configuration in the application context
-2. Make sure that `Clock` and `DataSource` beans are available
-3. Place the `@Synchronized` annotation on the beans that need synchronization
+2. Make sure that `Clock` and `DataSource` beans are available, and an optionally override the `@Bean public BeanSyncTablePrefix beanSyncTablePrefix()` bean
+3. Create the beanlock database table like: `CREATE TABLE [prefix]BEAN_LOCK (BEANID VARCHAR, CLIENTID VARCHAR, EXPIRYSECS INT, ISSUED_TIMESTAMP TIMESTAMP)`
+4. Place the `@Synchronized` annotation on the beans that need synchronization
 
 **Whishlist and ideas**
-
-DataSourceBeanLocker (extract interface from MapBeanLocker). See TODOs
 
 

@@ -2,9 +2,7 @@ package bs.beansynchronizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import bs.beansynchronizer.Synchronized;
-
-@Synchronized(lockExpiryMins = Foo.EXPIRY_MINS)
+@Synchronized(lockExpirySecs = Foo.EXPIRY_SECS)
 public class FooImpl implements Foo
 {
     @Autowired

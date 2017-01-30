@@ -2,7 +2,7 @@ package bs.beansynchronizer;
 
 public interface Foo
 {
-    public static final int EXPIRY_MINS = 1;
+    public static final int EXPIRY_SECS = 60;
 
     void start();
 

@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,7 @@ import org.springframework.context.support.SimpleThreadScope;
 @Configuration
 public class SynchronizeTestConfig
 {
-    public static final String JDBC_DRIVER_NAME = "org.hsqldb.jdbcDriver";
+    public static final String JDBC_DRIVER_NAME = "org.h2.Driver";
     public static final String USER_NAME = "sa";
     public static final String PASSWORD = "";
 
@@ -30,27 +33,27 @@ public class SynchronizeTestConfig
         return customScopeConfigurer;
     }
 
-    /**
-     * Override and put in thread scope because only one test at a time must be able to access this mutable bean in a
-     * parallel testing scenario
-     */
-    @Scope(THREAD_SCOPE)
-    @Bean
-    public BeanLocker beanLocker()
-    {
-        return new MapBeanLocker(clock());
-    }
-
-//    @Bean(name = "processMgrDataSource", destroyMethod = "close")
-//    public BasicDataSource dataSource()
+//    /**
+//     * Override and put in thread scope because only one test at a time must be able to access this mutable bean in a
+//     * parallel testing scenario
+//     */
+//    @Scope(THREAD_SCOPE)
+//    @Bean
+//    public BeanLocker beanLocker()
 //    {
-//        BasicDataSource ds = new BasicDataSource();
-//        ds.setDriverClassName(JDBC_DRIVER_NAME);
-//        ds.setUsername(USER_NAME);
-//        ds.setPassword(PASSWORD);
-//        ds.setUrl("jdbc:hsqldb:mem:processMgr");
-//        return ds;
+//        return new MapBeanLocker(clock());
 //    }
+
+    @Bean(name = "processMgrDataSource", destroyMethod = "close")
+    public DataSource dataSource()
+    {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(JDBC_DRIVER_NAME);
+        ds.setUsername(USER_NAME);
+        ds.setPassword(PASSWORD);
+        ds.setUrl("jdbc:h2:mem:processMgr");
+        return ds;
+    }
 
     @Bean
     public Foo foo()
