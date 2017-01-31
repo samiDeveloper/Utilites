@@ -1,15 +1,12 @@
 package bs.beansynchronizer;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.ExposeBeanNameAdvisors;
-import org.springframework.context.ApplicationContext;
 
 /**
  * Proceeds the invocation only if the bean instance has a lock. Enables synchronization of bean instances across
@@ -27,25 +24,18 @@ public class SynchronizeInterceptor implements MethodInterceptor
 
     private final BeanLocker beanLocker;
 
-    // TODO 60. Remove appContext from SyncInterceptor. Datasource implementation is itself a bean and gets the ds injected, remove
-    // aC here.
-    private final ApplicationContext applicationContext;
-
-    public SynchronizeInterceptor(BeanLocker beanLocker, ApplicationContext applicationContext) {
+    public SynchronizeInterceptor(BeanLocker beanLocker) {
         super();
         this.beanLocker = beanLocker;
-        this.applicationContext = applicationContext;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable
     {
-        LOG.info("SynchronizeInterceptor hit: " + invocation.toString());
+        LOG.debug("SynchronizeInterceptor hit: " + invocation.toString());
 
         String targetBeanName = fetchBeanName(invocation);
 
-        // String dataSourceName = figureDataSourceName(invocation);
-        // DataSource ds = applicationContext.getBean(dataSourceName, DataSource.class);
         int expirySeconds= figureExpirySecs(invocation);
         boolean haveLock = beanLocker.acquireLock(MY_CLIENT_ID, BeanName.of(targetBeanName), expirySeconds);
 
@@ -73,16 +63,6 @@ public class SynchronizeInterceptor implements MethodInterceptor
             throw new IllegalStateException("Unable to fetch the invoked bean name", e);
         }
         return targetBeanName;
-    }
-
-    private ConcurrentMap<String, Lock> beanLocks = new ConcurrentHashMap<>();
-
-    private String figureDataSourceName(MethodInvocation invocation)
-    {
-        Class<?> targetClass = invocation.getThis().getClass();
-        Synchronized syncAnno = targetClass.getAnnotation(Synchronized.class);
-        String dataSourceName = syncAnno.dataSource();
-        return dataSourceName;
     }
 
     private int figureExpirySecs(MethodInvocation invocation)

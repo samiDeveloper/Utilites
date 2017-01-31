@@ -21,7 +21,7 @@ final class BeanSyncTestSupport
 
     /**
      * Allows remote access to the db for debugging. Connect jdbc username is 'SA', url is
-     * 'jdbc:h2:tcp://localhost:8092/mem:testdb' Set breakpoint after server start and connect
+     * 'jdbc:h2:tcp://localhost:8092/mem:testdb;IFEXISTS=TRUE' Set breakpoint after server start and connect
      */
     static Server startServer() throws SQLException
     {
@@ -50,7 +50,6 @@ final class BeanSyncTestSupport
             Statement updateStm = con.createStatement();
             String tableName = tableName(tablePrefix);
             String stm = "CREATE TABLE " + tableName + " (BEANID VARCHAR, CLIENTID VARCHAR, EXPIRYSECS INT, ISSUED_TIMESTAMP TIMESTAMP)";
-            System.out.println(stm);
             updateStm.execute(stm);
         } catch (SQLException e)
         {
@@ -68,7 +67,6 @@ final class BeanSyncTestSupport
         {
             Statement updateStm = con.createStatement();
             String stm = "DROP TABLE " + tableName(tablePrefix);
-            System.out.println(stm);
             updateStm.execute(stm);
         } catch (SQLException e)
         {

@@ -15,34 +15,28 @@ import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.interceptor.ExposeBeanNameAdvisors;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-/** Depends on existence of Clock and DataSource beans */
+/** Depends on existence of a Clock bean and a DataSource bean, preferably named 'beanSyncDataSource' */
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-public class SynchronizeConfig implements ApplicationContextAware
+public class SynchronizeConfig
 {
     private static final Logger LOG = LoggerFactory.getLogger(SynchronizeConfig.class);
 
     @Autowired
-    private Clock clock;
+    private Clock beanSyncClock;
 
     @Autowired
-    private DataSource dataSource;
-
-    private ApplicationContext applicationContext;
+    private DataSource beanSyncDataSource;
 
     @Bean
     public BeanLocker beanLocker()
     {
-        return new DataSourceBeanLocker(dataSource, beanSyncTablePrefix(), clock);
+        return new DataSourceBeanLocker(beanSyncDataSource, beanSyncTablePrefix(), beanSyncClock);
     }
 
     @Bean
@@ -57,7 +51,7 @@ public class SynchronizeConfig implements ApplicationContextAware
     private SynchronizeInterceptor synchronizeInterceptor()
     {
         LOG.info("Creating bean synchroization advise");
-        return new SynchronizeInterceptor(beanLocker(), applicationContext);
+        return new SynchronizeInterceptor(beanLocker());
     }
 
     /**
@@ -72,8 +66,6 @@ public class SynchronizeConfig implements ApplicationContextAware
         // http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#aop-pointcuts-designators
         String pointcutDef = String.format("@within(%s)", Synchronized.class.getName());
         pointcut.setExpression(pointcutDef);
-
-        // pointcut.setExpression("execution(* *.go(..))");
 
         DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pointcut, synchronizeInterceptor());
         return advisor;
@@ -115,11 +107,5 @@ public class SynchronizeConfig implements ApplicationContextAware
         };
         proxyCreator.setProxyTargetClass(true); // we need cglib to proxy classes not only interfaces
         return proxyCreator;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-    {
-        this.applicationContext = applicationContext;
     }
 }

@@ -33,25 +33,14 @@ public class SynchronizeTestConfig
         return customScopeConfigurer;
     }
 
-//    /**
-//     * Override and put in thread scope because only one test at a time must be able to access this mutable bean in a
-//     * parallel testing scenario
-//     */
-//    @Scope(THREAD_SCOPE)
-//    @Bean
-//    public BeanLocker beanLocker()
-//    {
-//        return new MapBeanLocker(clock());
-//    }
-
-    @Bean(name = "processMgrDataSource", destroyMethod = "close")
+    @Bean(name = "beanSyncDataSource", destroyMethod = "close")
     public DataSource dataSource()
     {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(JDBC_DRIVER_NAME);
         ds.setUsername(USER_NAME);
         ds.setPassword(PASSWORD);
-        ds.setUrl("jdbc:h2:mem:processMgr");
+        ds.setUrl("jdbc:h2:mem:testdb");
         return ds;
     }
 

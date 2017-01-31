@@ -31,7 +31,7 @@ public class SynchronizeInterceptorIT
     private BeanLocker beanLocker;
 
     @Autowired
-    private DataSource dataSource;
+    private DataSource beanSyncDataSource;
 
     @Autowired
     private MutableClockStub clock;
@@ -48,7 +48,7 @@ public class SynchronizeInterceptorIT
     @Before
     public void before()
     {
-        BeanSyncTestSupport.createLockTable(dataSource, tablePrefix);
+        BeanSyncTestSupport.createLockTable(beanSyncDataSource, tablePrefix);
     }
 
     @After
@@ -56,7 +56,7 @@ public class SynchronizeInterceptorIT
     {
         this.barSpy.reset();
         this.beanLocker.releaseAllLocks();
-        BeanSyncTestSupport.tearDownDatabase(dataSource, tablePrefix);
+        BeanSyncTestSupport.tearDownDatabase(beanSyncDataSource, tablePrefix);
     }
 
     @Test

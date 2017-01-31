@@ -14,6 +14,9 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -21,14 +24,15 @@ import lombok.val;
  * Depends on the existence of the BEAN_LOCK table.
  * 
  * <p>
- * Create SQL: {@code CREATE TABLE [prefix]BEAN_LOCK (BEANID VARCHAR, CLIENTID VARCHAR, EXPIRYSECS INT, ISSUED_TIMESTAMP TIMESTAMP)}
+ * Create SQL:
+ * {@code CREATE TABLE [prefix]BEAN_LOCK (BEANID VARCHAR, CLIENTID VARCHAR, EXPIRYSECS INT, ISSUED_TIMESTAMP TIMESTAMP)}
  */
 public class DataSourceBeanLocker implements BeanLocker
 {
-    // TODO 70. Add logging, remove sysouts
+    private static final Logger LOG = LoggerFactory.getLogger(DataSourceBeanLocker.class);
 
     private static final String TABLENAME = "BEAN_LOCK";
-    
+
     private static final BeanSyncTablePrefix DEFAULT_TABLEPREFIX = BeanSyncTablePrefix.empty();
 
     private final DataSourceLockSource dataSourceLockSource;
@@ -38,6 +42,8 @@ public class DataSourceBeanLocker implements BeanLocker
     @RequiredArgsConstructor
     private static class DataSourceLockSource implements LockSource
     {
+        private static final Logger LOG = LoggerFactory.getLogger(DataSourceLockSource.class);
+
         private final DataSource dataSource;
 
         private final String prefixedTableName;
@@ -45,6 +51,8 @@ public class DataSourceBeanLocker implements BeanLocker
         @Override
         public void put(BeanName beanName, Lock lock)
         {
+            LOG.debug("put lock on " + beanName + ": " + lock);
+
             try (val c = dataSource.getConnection())
             {
                 c.setAutoCommit(false);
@@ -60,14 +68,20 @@ public class DataSourceBeanLocker implements BeanLocker
 
         private static void deleteLockFor(BeanName beanName, String tableName, Connection c) throws SQLException
         {
+            LOG.debug("deleteLock");
+            
             val stm = c.prepareStatement("DELETE FROM  " + tableName + " WHERE BEANID = ?");
+            
             stm.setString(1, beanName.getBeanName()
                     .toString());
+            LOG.debug("execute: " + stm);
             stm.execute();
         }
 
         private static void insertLock(BeanName beanName, Lock lock, String tableName, Connection c) throws SQLException
         {
+            LOG.debug("insertLock");
+
             PreparedStatement insertStm = c
                     .prepareStatement("INSERT INTO " + tableName + " (BEANID, CLIENTID, EXPIRYSECS, ISSUED_TIMESTAMP) VALUES (?, ?, ?, ?)");
             insertStm.setString(1, beanName.getBeanName()
@@ -79,18 +93,22 @@ public class DataSourceBeanLocker implements BeanLocker
                     .toEpochMilli());
             insertStm.setTimestamp(4, issuedTimestamp);
 
+            LOG.debug("execute: " + insertStm);
             insertStm.execute();
         }
 
         @Override
         public Optional<Lock> get(BeanName beanName)
         {
+            LOG.debug("get lock for " + beanName);
+
             try (val c = dataSource.getConnection())
             {
                 val stmStr = "SELECT BEANID, CLIENTID, EXPIRYSECS, ISSUED_TIMESTAMP FROM  " + this.prefixedTableName + "  WHERE BEANID = ?";
                 val stm = c.prepareStatement(stmStr);
                 stm.setString(1, beanName.getBeanName()
                         .toString());
+                LOG.debug("executeQuery: " + stm);
                 val result = stm.executeQuery();
                 if (!result.next())
                 {
@@ -130,10 +148,13 @@ public class DataSourceBeanLocker implements BeanLocker
 
         public void deleteLocksForClient(UUID clientId)
         {
+            LOG.debug("deleteLocksForClient: " + clientId);
+            
             try (val c = dataSource.getConnection())
             {
                 val stm = c.prepareStatement("DELETE FROM  " + prefixedTableName + " WHERE CLIENTID = ?");
                 stm.setString(1, clientId.toString());
+                LOG.debug("execute: " + stm);
                 stm.execute();
             } catch (SQLException e)
             {
@@ -143,11 +164,14 @@ public class DataSourceBeanLocker implements BeanLocker
 
         public int size()
         {
+            LOG.debug("size");
+            
             try
             {
                 val c = dataSource.getConnection();
                 val stmStr = "SELECT COUNT(*) FROM  " + this.prefixedTableName;
                 val stm = c.prepareStatement(stmStr);
+                LOG.debug("executeQuery: " + stm);
                 val result = stm.executeQuery();
                 result.next();
                 return result.getInt(1);
@@ -160,11 +184,13 @@ public class DataSourceBeanLocker implements BeanLocker
 
         public void deleteExpired(Clock clock)
         {
+            LOG.debug("deleteExpired at " + clock.instant());
+
             try (val c = dataSource.getConnection())
             {
                 // Do it in Java, not SQL
                 c.setAutoCommit(false);
-                
+
                 val result = selectAll(prefixedTableName, c);
 
                 val locks = rowsToBeanLockMap(result);
@@ -196,18 +222,24 @@ public class DataSourceBeanLocker implements BeanLocker
 
         private static ResultSet selectAll(String tableName, Connection c) throws SQLException
         {
+            LOG.debug("selectAll");
+            
             val stmStr = "SELECT BEANID, CLIENTID, EXPIRYSECS, ISSUED_TIMESTAMP FROM  " + tableName;
             val stm = c.prepareStatement(stmStr);
+            LOG.debug("executeQuery: " + stm);
             val result = stm.executeQuery();
             return result;
         }
 
         public void clear()
         {
+            LOG.debug("clear");
+            
             try (val c = dataSource.getConnection())
             {
-            val stm = c.prepareStatement("DELETE FROM  " + this.prefixedTableName);
-            stm.execute();
+                val stm = c.prepareStatement("DELETE FROM  " + this.prefixedTableName);
+                LOG.debug("execute: " + stm);
+                stm.execute();
             } catch (SQLException e)
             {
                 throw new RuntimeException(e);
@@ -218,7 +250,7 @@ public class DataSourceBeanLocker implements BeanLocker
     public DataSourceBeanLocker(DataSource dataSource, Clock clock) {
         this(dataSource, DEFAULT_TABLEPREFIX, clock);
     }
-    
+
     public DataSourceBeanLocker(DataSource dataSource, BeanSyncTablePrefix tablePrefix, Clock clock) {
         super();
         this.dataSourceLockSource = new DataSourceLockSource(dataSource, tablePrefix + TABLENAME);
@@ -228,18 +260,24 @@ public class DataSourceBeanLocker implements BeanLocker
     @Override
     public boolean acquireLock(UUID clientId, BeanName targetBean, int expirySecs)
     {
+        LOG.debug("acquireLock");
+        
         return LockSupport.acquireLock(dataSourceLockSource, clientId, targetBean, expirySecs, clock);
     }
 
     @Override
     public void releaseLocksForClient(UUID clientId)
     {
+        LOG.debug("releaseLocksForClient");
+        
         dataSourceLockSource.deleteLocksForClient(clientId);
     }
 
     @Override
     public void releaseAllLocks()
     {
+        LOG.debug("releaseAllLocks");
+        
         dataSourceLockSource.clear();
     }
 
@@ -247,6 +285,8 @@ public class DataSourceBeanLocker implements BeanLocker
     @Override
     public int size()
     {
+        LOG.debug("size");
+        
         cleanupExpiredLogic();
         return dataSourceLockSource.size();
     }
@@ -254,6 +294,8 @@ public class DataSourceBeanLocker implements BeanLocker
     @Override
     public void cleanupExpired()
     {
+        LOG.debug("cleanupExpired");
+        
         cleanupExpiredLogic();
     }
 

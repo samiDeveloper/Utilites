@@ -11,7 +11,6 @@ public class FooImpl implements Foo
     @Override
     public void start()
     {
-        System.out.println("FooImpl.start");
         bar.go();
     }
 }
