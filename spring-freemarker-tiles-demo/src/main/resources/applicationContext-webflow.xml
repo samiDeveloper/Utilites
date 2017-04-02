@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+    xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/webflow-config
+           http://www.springframework.org/schema/webflow-config/spring-webflow-config.xsd">
+
+
+    <!-- Enables FlowHandler URL mapping -->
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+        <property name="flowExecutor" ref="flowExecutor" />
+    </bean>
+
+    <!-- Maps modes to handlers -->
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+        <property name="flowRegistry" ref="flowRegistry" />
+        <property name="order" value="0" />
+    </bean>
+
+    <!-- Executes flows: the central entry point into the Spring Web Flow system -->
+    <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry">
+
+        <webflow:flow-execution-repository max-executions="0" max-execution-snapshots="6" />
+    </webflow:flow-executor>
+
+    <!-- The registry of executable flow definitions -->
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="myFlowBuilderServices">
+        <webflow:flow-location-pattern value="/WEB-INF/flows/**/*.xml" />
+    </webflow:flow-registry>
+
+    <!-- make Freemarker work with WebFlow -->
+    <webflow:flow-builder-services id="myFlowBuilderServices" view-factory-creator="myViewFactoryCreator" />
+
+
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/tile-defs/tiles-defs.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="myViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <property name="viewResolvers">
+            <list>
+                <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver" />
+                <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+                    <!-- cache off for DEVELOPMENT ONLY -->
+                    <property name="cache">
+                        <value>false</value>
+                    </property>
+                    <property name="prefix">
+                        <value>/WEB-INF/freemarker/</value>
+                    </property>
+                    <property name="suffix">
+                        <value>.ftl</value>
+                    </property>
+                    <property name="viewClass">
+                        <value>org.springframework.web.servlet.view.freemarker.FreeMarkerView
+                        </value>
+                    </property>
+                    <property name="exposeSpringMacroHelpers">
+                        <value>true</value>
+                    </property>
+                    <property name="exposeRequestAttributes" value="true" />
+                    <property name="exposeSessionAttributes" value="true" />
+                    <property name="contentType">
+                        <value>text/html;charset=UTF-8</value>
+                    </property>
+                    <property name="requestContextAttribute" value="rc" />
+                </bean>
+            </list>
+        </property>
+        <property name="messageCodesResolver">
+            <bean class="org.springframework.validation.DefaultMessageCodesResolver">
+                <property name="prefix" value="error." />
+            </bean>
+
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="mainBean" class="bs.tilesdemo.MainBackingBean" />
+
+    <on-start>
+        <evaluate expression="mainBean.init()" />
+    </on-start>
+        
+    <view-state id="enterName" view="better/enterName" model="mainBean">
+        <transition on="next" to="confirm" />
+    </view-state>
+
+    <view-state id="confirm" view="better/confirm" model="mainBean">
+        <transition on="next" to="finish" />
+    </view-state>
+
+    <end-state id="finish" view="redirect:/" />
+
+</flow>

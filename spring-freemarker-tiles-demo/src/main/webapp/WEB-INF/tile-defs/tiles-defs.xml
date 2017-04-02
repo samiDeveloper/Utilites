@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <definition name="main.layout" template="/tiles/layout.ftl">
+        <put-attribute name="title" value="Tiles flow" />
+        <put-attribute name="header" value="/tiles/header.ftl" />
+        <put-attribute name="content" value="" />
+        <put-attribute name="footer" value="/tiles/footer.ftl" />
+    </definition>
+    <definition name="main.enterName" extends="main.layout">
+        <put-attribute name="title" value="Tiles flow - enter name" />
+        <put-attribute name="content" value="/tiles/enterName.ftl" />
+    </definition>
+    <definition name="main.confirm" extends="main.layout">
+        <put-attribute name="title" value="Tiles flow - confirm" />
+        <put-attribute name="content" value="/tiles/confirm.ftl" />
+    </definition>
+</tiles-definitions>
