@@ -28,7 +28,9 @@ multi-context-demo
 scalademo
 : Solutions for the exercises in [Scala for the Impatient](https://www.informit.com/store/scala-for-the-impatient-9780321774095)
 
+spring-freemarker-tiles-demo
+: Shows different strategies to structure a web application's view layer
+
 sql-insert-fmt
 : Formats SQL insert statements by aligning columnnames and values
-
 
