@@ -13,7 +13,7 @@ My controllers are two 30 yr old Arcade joysticks. Applied the Retronic Design U
 Plug in your controllers / joysticks
 
 	joystickdemo$> mvn package
-	joystickdemo$> java -jar target/joystickdemo-0.1-jar-with-dependencies.jar
+	joystickdemo$> java -jar target/joystickdemo-jar-with-dependencies.jar
 	
 Now play around with the controllers and see what happens
 

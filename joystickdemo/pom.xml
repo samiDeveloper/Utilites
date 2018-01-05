@@ -49,7 +49,7 @@
         </executions>
       </plugin>
     </plugins>
-    <finalName>my-program</finalName>
+    <finalName>joystickdemo</finalName>
   </build>
 
   <dependencies>
